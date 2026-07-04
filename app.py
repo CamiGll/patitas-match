@@ -41,10 +41,24 @@ if st.button("Analizar y Buscar Adoptantes", type="primary"):
             # Mostramos en pantalla el resultado REAL, no el fijo
             st.success("¡Ficha técnica estructurada por IA correctamente!")
             st.json(datos_perro)
-
+            
             # B. INSERCIÓN REAL EN LA BASE DE DATOS
-            res_perro = supabase.table('perros').insert(nuevo_perro).execute()
-            nuevo_perro_id = respuesta_db.data[0]["id"]
+            # Preparamos el diccionario con los datos limpios de Gemini + la descripción original
+            datos_insertar = {
+                "nombre": datos_perro["nombre"],
+                "descripcion_original": descripcion,
+                "edad": datos_perro["edad"],
+                "energia": datos_perro["energia"],
+                "necesita_patio": datos_perro["necesita_patio"],
+                "apto_ninos": datos_perro["apto_ninos"],
+                "apto_gatos": datos_perro["apto_gatos"]
+            }
+            
+            # Ejecutamos la inserción
+            res_perro = supabase.table('perros').insert(datos_insertar).execute()
+            
+            # Extraemos el ID del registro recién creado
+            nuevo_perro_id = res_perro.data[0]["id"]
             st.success(f"¡Registro persistido en la nube! ID de Mascota: {nuevo_perro_id}")
 
             # C. MOTOR DE MATCHING

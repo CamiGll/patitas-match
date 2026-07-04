@@ -19,6 +19,18 @@ class PerfilPerro(BaseModel):
     apto_gatos: bool
 
 # ... (Tu código de interfaz de Streamlit actual: título, text_area, etc) ...
+st.set_page_config(page_title="Patitas Match", page_icon="🐾", layout="centered")
+st.title("🐾 Patitas Match")
+st.subheader("Registro de perritos rescatados")
+st.write("Ingresa la reseña informal. El sistema extraerá las variables con IA, creará el registro en la base de datos y calculará la afinidad con los postulantes reales.")
+
+st.markdown("---")
+
+descripcion = st.text_area(
+    "Historia clínica/informal del rescatado:",
+    placeholder="Ej: Encontramos a ramiro deambulando. Es un viejito de 9 años super tranquilo (energía baja). No tiene paciencia para nenes pero se lleva de diez con gatos. Ideal departamento.",
+    height=150
+)
 
 if st.button("Analizar y Buscar Adoptantes", type="primary"):
     if descripcion:

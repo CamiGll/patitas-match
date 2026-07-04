@@ -44,7 +44,69 @@ if st.button("Analizar y Buscar Adoptantes", type="primary"):
 
             # B. INSERCIÓN REAL EN LA BASE DE DATOS
             res_perro = supabase.table('perros').insert(nuevo_perro).execute()
-             
-            # C. MOTOR DE MATCHING
             nuevo_perro_id = respuesta_db.data[0]["id"]
             st.success(f"¡Registro persistido en la nube! ID de Mascota: {nuevo_perro_id}")
+
+            # C. MOTOR DE MATCHING
+            st.markdown("### 🏆 Panel de Decisiones Automatizado")
+            st.write(f"Evaluando adoptantes para **{datos_perro['nombre'].capitalize()}**...")
+
+            # 1. Traemos a todos los adoptantes de la base de datos
+            adoptantes_db = supabase.table("adoptantes").select("*").execute()
+            adoptantes = adoptantes_db.data
+            
+            resultados_visuales = []
+
+            # 2. Iteramos sobre cada adoptante para calcular el score
+            for adoptante in adoptantes:
+                afinidad = 100
+                apto = True
+                motivo = []
+                
+                # Reglas Excluyentes (Hard Blocks)
+                if datos_perro["apto_ninos"] == False and adoptante["tiene_ninos"] == True:
+                    apto = False
+                    afinidad = 0
+                    motivo.append("No compatible con niños.")
+                
+                if datos_perro["apto_gatos"] == False and adoptante["tiene_gatos"] == True:
+                    apto = False
+                    afinidad = 0
+                    motivo.append("No compatible con gatos.")
+                
+                # Penalizaciones (Soft Blocks) - Solo si superó los filtros excluyentes
+                if apto:
+                    if datos_perro["necesita_patio"] == True and adoptante["tipo_vivienda"] == "departamento":
+                        afinidad -= 30
+                        motivo.append("Penalización: Sin patio.")
+                    
+                    if datos_perro["energia"] == "alto" and adoptante["tipo_vivienda"] == "departamento":
+                        afinidad -= 20
+                        motivo.append("Penalización: Departamento para alta energía.")
+                    
+                    if len(motivo) == 0:
+                        motivo.append("Estilo de vida acorde.")
+                
+                # 3. Formateamos el motivo final
+                motivo_texto = " ".join(motivo)
+                
+                # 4. Guardamos el resultado del cruce en el historial de Supabase
+                supabase.table("historial_matches").insert({
+                    "perro_id": nuevo_perro_id,
+                    "adoptante_id": adoptante["id"],
+                    "porcentaje_afinidad": afinidad,
+                    "apto": apto,
+                    "motivo": motivo_texto
+                }).execute()
+                
+                # 5. Agregamos la fila formateada para mostrar en Streamlit
+                estado_visual = "✅ Apto" if apto else "❌ Descartado"
+                resultados_visuales.append({
+                    "Adoptante": f"{adoptante['nombre']} (ID: {adoptante['id']})",
+                    "Afinidad": f"{afinidad}%",
+                    "Estado": estado_visual,
+                    "Motivo": motivo_texto
+                })
+                
+            # Mostramos la tabla dinámica final en la web
+            st.table(resultados_visuales)

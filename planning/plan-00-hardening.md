@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 🟡 Ready |
+| **Status** | 🟢 Done (2026-07-12) |
 | **Depends on** | — |
 | **PRD sections** | §3.4 (L3–L7), §7.2, §7.3 |
 | **Default model** | Sonnet (tasks tagged `[haiku]` are fine for Haiku) |
@@ -107,7 +107,8 @@ Deviations from the plan as written, per workflow rule 2:
 - **Task 4:** duplicate-guard flow uses `st.session_state` to keep the extracted profile across the checkbox rerun, so confirming a duplicate does not re-call Gemini.
 - **Task 6:** Supabase CLI not installed and `supabase login` is interactive — used the plan's sanctioned fallback: baseline migration hand-written from the live schema (queried via `information_schema`/`pg_constraint`), committed as `supabase/migrations/20260712120000_baseline_schema.sql`. **Update (same day):** CLI v2.109.1 installed at `%LOCALAPPDATA%\Programs\supabase` (on user PATH) and `supabase init` run (config.toml committed). **Pending for plan-01:** Camila runs `supabase login`, then `supabase link --project-ref lizyjyqvnhmnjkpqfmlf`.
 - Added `pytest.ini` (marker registration + `pythonpath`), not in the original target structure.
-- `.streamlit/secrets.toml` created locally (git-ignored) with Supabase URL + anon key; `GEMINI_API_KEY` is a placeholder Camila must fill to run the app locally.
+- `.streamlit/secrets.toml` created locally (git-ignored) with Supabase URL + anon key; Camila filled in `GEMINI_API_KEY`.
+- **Verified E2E 2026-07-12** (Playwright driving the real UI): happy path matches the pre-refactor oracle exactly (Sofía 100 / Carlos 0 / Laura 100), duplicate guard stops the flow and proceeds on confirmation, empty input is a no-op, invalid Gemini key shows the step-① error with zero DB writes. Verification caught one regression, fixed same day: `@st.cache_resource` clients were pinned to the secrets at first use — factories now take credentials as cache-key arguments. Test rows cleaned up. Recipe persisted in `.claude/skills/verify/SKILL.md`.
 
 ## Risks / hard sections
 

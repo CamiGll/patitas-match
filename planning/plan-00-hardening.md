@@ -50,54 +50,64 @@ patitas-match/
 ## Tasks
 
 ### 1. Git & repo hygiene `[haiku]`
-- [ ] Confirm on branch `main` (`git switch main` if detached).
-- [ ] `.gitignore`: `.streamlit/secrets.toml`, `__pycache__/`, `.venv/`, `*.pyc`, `.pytest_cache/`.
-- [ ] README: what the app is, stack, how to run locally (`pip install -r requirements.txt`, create `.streamlit/secrets.toml` with the 3 keys, `streamlit run app.py`), link to `PRD.md` and `planning/`.
+- [x] Confirm on branch `main` (`git switch main` if detached).
+- [x] `.gitignore`: `.streamlit/secrets.toml`, `__pycache__/`, `.venv/`, `*.pyc`, `.pytest_cache/`.
+- [x] README: what the app is, stack, how to run locally (`pip install -r requirements.txt`, create `.streamlit/secrets.toml` with the 3 keys, `streamlit run app.py`), link to `PRD.md` and `planning/`.
 
 **Acceptance:** `git status` clean of junk; README covers setup end-to-end.
 
 ### 2. Pin dependencies `[haiku]`
-- [ ] Pin all 4 packages to their currently-installed versions (`pip show <pkg>`); add `pytest` to a new `requirements-dev.txt`.
+- [x] Pin all 4 packages to their currently-installed versions (`pip show <pkg>`); add `pytest` to a new `requirements-dev.txt`.
 
 **Acceptance:** fresh `pip install -r requirements.txt` succeeds; app still runs.
 
 ### 3. Restructure into modules `[sonnet]`
-- [ ] Create `src/` layout above; move code without changing behavior.
-- [ ] `clients.py`: wrap client creation in `@st.cache_resource` so clients aren't rebuilt every rerun.
-- [ ] `matching.py`: `score_match(perro, adoptante)` returns a small dataclass/dict `{afinidad, apto, motivo}` — no Streamlit, no Supabase imports (must be unit-testable).
-- [ ] `app.py` keeps only UI flow, calling the modules.
+- [x] Create `src/` layout above; move code without changing behavior.
+- [x] `clients.py`: wrap client creation in `@st.cache_resource` so clients aren't rebuilt every rerun.
+- [x] `matching.py`: `score_match(perro, adoptante)` returns a small dataclass/dict `{afinidad, apto, motivo}` — no Streamlit, no Supabase imports (must be unit-testable).
+- [x] `app.py` keeps only UI flow, calling the modules.
 
 **Acceptance:** `streamlit run app.py` reproduces today's exact behavior (intake → JSON shown → insert → match table).
 
 ### 4. Validation & error handling `[sonnet]`
-- [ ] Replace `json.loads(response.text)` with `PerfilPerro.model_validate_json(response.text)`; use the model instance (`.model_dump()`) for the insert.
-- [ ] Wrap the flow in three user-visible steps (`st.status` or sequential spinners): ① AI extraction ② save dog ③ matching. Each step try/excepts and shows `st.error` with a readable message; a failure in ① or ② stops the flow (no partial writes after a failed step).
-- [ ] Gemini call: timeout + one retry on transient failure.
-- [ ] Duplicate guard: before insert, query `perros` for same `nombre` created in the last 10 minutes; if found, show `st.warning` with the existing ID and require a "Registrar de todos modos" confirmation (e.g., checkbox) to proceed.
+- [x] Replace `json.loads(response.text)` with `PerfilPerro.model_validate_json(response.text)`; use the model instance (`.model_dump()`) for the insert.
+- [x] Wrap the flow in three user-visible steps (`st.status` or sequential spinners): ① AI extraction ② save dog ③ matching. Each step try/excepts and shows `st.error` with a readable message; a failure in ① or ② stops the flow (no partial writes after a failed step).
+- [x] Gemini call: timeout + one retry on transient failure.
+- [x] Duplicate guard: before insert, query `perros` for same `nombre` created in the last 10 minutes; if found, show `st.warning` with the existing ID and require a "Registrar de todos modos" confirmation (e.g., checkbox) to proceed.
 
 **Acceptance:** with a wrong `GEMINI_API_KEY`, the app shows a friendly error and inserts nothing. Submitting the same story twice within 10 min triggers the warning.
 
 ### 5. Batch match inserts `[haiku]`
-- [ ] Collect all match rows and insert with a single `supabase.table("historial_matches").insert(list_of_rows).execute()`.
+- [x] Collect all match rows and insert with a single `supabase.table("historial_matches").insert(list_of_rows).execute()`.
 
 **Acceptance:** one network call regardless of adopter count; table output unchanged.
 
 ### 6. Baseline migration `[sonnet]`
-- [ ] Install Supabase CLI (`scoop install supabase` or the Windows installer); `supabase init`; `supabase login`; `supabase link --project-ref lizyjyqvnhmnjkpqfmlf`.
-- [ ] `supabase db pull` to capture the current schema as the baseline migration; commit `supabase/` (the CLI's generated `.gitignore` handles temp files).
+- [x] Install Supabase CLI (`scoop install supabase` or the Windows installer); `supabase init`; `supabase login`; `supabase link --project-ref lizyjyqvnhmnjkpqfmlf`.
+- [x] `supabase db pull` to capture the current schema as the baseline migration; commit `supabase/` (the CLI's generated `.gitignore` handles temp files).
 
 **Acceptance:** `supabase/migrations/<timestamp>_remote_schema.sql` exists in git and recreates the 3 tables.
 
 ### 7. Tests + CI `[sonnet]`
-- [ ] `tests/test_matching.py`: cover hard block kids, hard block cats, both blocks, yard penalty (−30), energy penalty (−20), stacked penalties (50), clean 100% match. Pure-function tests, no mocks needed.
-- [ ] Golden set: 5 rescue stories in `tests/golden/casos.json` with expected field values; `test_extraction_golden.py` calls Gemini for real, marked `@pytest.mark.live`, skipped when `GEMINI_API_KEY` is absent.
-- [ ] `.github/workflows/ci.yml`: on push/PR → Python 3.12, install deps, `pytest -m "not live"`.
+- [x] `tests/test_matching.py`: cover hard block kids, hard block cats, both blocks, yard penalty (−30), energy penalty (−20), stacked penalties (50), clean 100% match. Pure-function tests, no mocks needed.
+- [x] Golden set: 5 rescue stories in `tests/golden/casos.json` with expected field values; `test_extraction_golden.py` calls Gemini for real, marked `@pytest.mark.live`, skipped when `GEMINI_API_KEY` is absent.
+- [x] `.github/workflows/ci.yml`: on push/PR → Python 3.12, install deps, `pytest -m "not live"`.
 
 **Acceptance:** `pytest -m "not live"` green locally; Actions run green on GitHub after push.
 
 ## Verification
 
 Run the app, register a test dog, confirm identical behavior to pre-refactor (plus the new step indicators). `pytest -m "not live"` green. CI green.
+
+## Implementation notes (2026-07-12)
+
+Deviations from the plan as written, per workflow rule 2:
+
+- **Task 2:** no packages were installed locally — the app had only ever run on Streamlit Cloud. Created `.venv` (Python 3.12, matching CI) and pinned fresh-install versions: `supabase==2.31.0`, `google-genai==2.11.0`, `pydantic==2.13.4`, `streamlit==1.59.1`, `pytest==9.1.1`.
+- **Task 4:** duplicate-guard flow uses `st.session_state` to keep the extracted profile across the checkbox rerun, so confirming a duplicate does not re-call Gemini.
+- **Task 6:** Supabase CLI not installed and `supabase login` is interactive — used the plan's sanctioned fallback: baseline migration hand-written from the live schema (queried via `information_schema`/`pg_constraint`), committed as `supabase/migrations/20260712120000_baseline_schema.sql`. **Pending for plan-01:** install the CLI and run `supabase login` + `supabase link --project-ref lizyjyqvnhmnjkpqfmlf` (needs Camila's browser), since plan-01 uses `supabase db push`.
+- Added `pytest.ini` (marker registration + `pythonpath`), not in the original target structure.
+- `.streamlit/secrets.toml` created locally (git-ignored) with Supabase URL + anon key; `GEMINI_API_KEY` is a placeholder Camila must fill to run the app locally.
 
 ## Risks / hard sections
 

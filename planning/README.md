@@ -7,7 +7,7 @@ This folder is the project's operating system: every piece of work starts as a p
 | Plan | Theme | Status | Depends on |
 |---|---|---|---|
 | [00-assessment.md](00-assessment.md) | Current-state snapshot (strengths/weaknesses) | 📸 Snapshot | — |
-| [plan-00-hardening.md](plan-00-hardening.md) | Restructure + fragility fixes, no new features | 🟡 Ready | — |
+| [plan-00-hardening.md](plan-00-hardening.md) | Restructure + fragility fixes, no new features | 🔵 In progress | — |
 | [plan-01-adopters-auth-security.md](plan-01-adopters-auth-security.md) | Supabase Auth, adopter self-registration, RLS | ⚪ Drafted | plan-00 |
 | [plan-02-dog-lifecycle.md](plan-02-dog-lifecycle.md) | Dog listing, detail, photos, state machine | ⚪ Drafted | plan-01 |
 | [plan-03-matching-v2.md](plan-03-matching-v2.md) | Hybrid matching: weighted rules + AI explanations | ⚪ Drafted | plan-01 (plan-02 recommended) |

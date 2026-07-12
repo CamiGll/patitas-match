@@ -1,0 +1,57 @@
+[
+  {
+    "historia": "Encontramos a ramiro deambulando. Es un viejito de 9 años super tranquilo (energía baja). No tiene paciencia para nenes pero se lleva de diez con gatos. Ideal departamento, no necesita patio.",
+    "esperado": {
+      "nombre": "ramiro",
+      "edad": "senior",
+      "energia": "bajo",
+      "necesita_patio": false,
+      "apto_ninos": false,
+      "apto_gatos": true
+    }
+  },
+  {
+    "historia": "Luna es una cachorra de 4 meses con energía altísima, corre todo el día y necesita sí o sí una casa con patio grande. Adora a los niños y juega con ellos, pero persigue a los gatos y no puede convivir con ellos.",
+    "esperado": {
+      "nombre": "luna",
+      "edad": "cachorro",
+      "energia": "alto",
+      "necesita_patio": true,
+      "apto_ninos": true,
+      "apto_gatos": false
+    }
+  },
+  {
+    "historia": "Rocco es un adulto de 3 años, de energía media: pasea dos veces al día y duerme el resto. Vive perfecto en un departamento sin patio. Es bueno con niños y convive sin problemas con gatos.",
+    "esperado": {
+      "nombre": "rocco",
+      "edad": "adulto",
+      "energia": "medio",
+      "necesita_patio": false,
+      "apto_ninos": true,
+      "apto_gatos": true
+    }
+  },
+  {
+    "historia": "Manchita es una abuela de 11 años, muy tranquila, de energía baja. En su hogar de tránsito convive con gatos y con niños chiquitos sin ningún problema. No necesita patio, con paseos cortos le alcanza.",
+    "esperado": {
+      "nombre": "manchita",
+      "edad": "senior",
+      "energia": "bajo",
+      "necesita_patio": false,
+      "apto_ninos": true,
+      "apto_gatos": true
+    }
+  },
+  {
+    "historia": "Toby tiene 2 años, es adulto joven y muy activo, de energía alta: necesita una casa con patio sí o sí porque en encierro se estresa. Es paciente y cariñoso con los niños, pero no se lleva nada bien con los gatos.",
+    "esperado": {
+      "nombre": "toby",
+      "edad": "adulto",
+      "energia": "alto",
+      "necesita_patio": true,
+      "apto_ninos": true,
+      "apto_gatos": false
+    }
+  }
+]

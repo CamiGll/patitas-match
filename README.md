@@ -41,6 +41,17 @@ AI-assisted adoption matching for rescue dogs. Staff paste a dog's rescue story 
 
 The golden extraction tests (`-m live`) call Gemini for real and are skipped unless `GEMINI_API_KEY` is set in the environment.
 
+## Roles & staff bootstrap
+
+Anyone can create an adopter account in the app (email + password, confirmation email required). **Staff** is granted by inserting the user's UUID into `profiles_staff` via the Supabase SQL editor (there is no UI for this on purpose):
+
+```sql
+insert into profiles_staff (user_id)
+select id from auth.users where email = 'person@example.com';
+```
+
+Row Level Security is enabled on all tables: adopters see and edit only their own profile; the dog-intake page and all dog/match data require a staff account; the bare anon key can read nothing.
+
 ## Docs
 
 - [`PRD.md`](PRD.md) — product requirements and decision log (the *what* and *why*)

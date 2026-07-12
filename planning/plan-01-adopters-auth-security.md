@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | ⚪ Drafted |
+| **Status** | 🔵 In progress (2026-07-12) |
 | **Depends on** | plan-00 |
 | **PRD sections** | §4.2 (FR-1.1…1.6), §7.1 |
 | **Default model** | Sonnet; tasks 2 and 5 tagged `[opus]` |
@@ -22,6 +22,14 @@ Dog browsing for adopters (plan-02), matching changes (plan-03), password-reset 
 - Streamlit is multipage via a `pages/` directory; session state via `st.session_state`.
 - **Key model:** in Streamlit everything runs server-side, but RLS only applies when queries carry the *user's* JWT. So: after login, create the per-user client with `create_client(url, anon_key)` + `client.postgrest.auth(session.access_token)`. Keep a separate service-role client (new secret `SUPABASE_SERVICE_KEY`) used ONLY inside staff-gated code paths.
 - Auth decision locked: email + password (00-assessment.md).
+
+## Implementation notes (2026-07-12)
+
+- **Execution order deviates from task order to protect the deployed app:** all code (tasks 3–6) is written before the RLS migration (task 2) is applied, and the git push happens immediately after RLS turns on — single Supabase project means the old deployed app breaks the moment RLS is enabled.
+- **`tiene_patio bool default false` added to the task-1 migration** — omitted from the column list but required by `PerfilAdoptante` (task 3), the profile form (task 6), and plan-03 matching.
+- **Profile form includes a `nombre` input** — `adoptantes.nombre` is NOT NULL and `PerfilAdoptante` doesn't extract it.
+- Migrations are applied via the Supabase MCP (no DB password available for `supabase db push`); local migration files are kept in lockstep and `supabase_migrations.schema_migrations` is synced so future CLI use is consistent.
+- Test users for RLS verification are created via REST signup and email-confirmed via SQL (no inbox needed).
 
 ## Tasks
 

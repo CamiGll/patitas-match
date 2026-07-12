@@ -9,6 +9,9 @@ import pytest
 pytestmark = pytest.mark.live
 
 CASOS = json.loads((Path(__file__).parent / "casos.json").read_text(encoding="utf-8"))
+CASOS_ADOPTANTES = json.loads(
+    (Path(__file__).parent / "casos_adoptantes.json").read_text(encoding="utf-8")
+)
 
 
 @pytest.fixture(scope="module")
@@ -26,4 +29,14 @@ def test_extraccion_golden(caso, gemini_client):
     from src.extraction import extract_perfil_perro
 
     perfil = extract_perfil_perro(caso["historia"], client=gemini_client)
+    assert perfil.model_dump() == caso["esperado"]
+
+
+@pytest.mark.parametrize(
+    "caso", CASOS_ADOPTANTES, ids=[f"adoptante_{i}" for i in range(len(CASOS_ADOPTANTES))]
+)
+def test_extraccion_adoptante_golden(caso, gemini_client):
+    from src.extraction import extract_perfil_adoptante
+
+    perfil = extract_perfil_adoptante(caso["historia"], client=gemini_client)
     assert perfil.model_dump() == caso["esperado"]

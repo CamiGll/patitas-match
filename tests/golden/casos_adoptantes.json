@@ -1,0 +1,41 @@
+[
+  {
+    "historia": "Vivo en una casa con un patio grande junto a mis dos hijos chicos. Tenemos un gato. Nunca tuve perro en mi vida. Trabajo fuera de casa 9 horas por día y soy muy activa: salgo a correr todas las mañanas y hago trekking los fines de semana.",
+    "esperado": {
+      "tipo_vivienda": "casa",
+      "tiene_patio": true,
+      "tiene_ninos": true,
+      "tiene_gatos": true,
+      "tiene_perros": false,
+      "horas_fuera": 9,
+      "nivel_actividad": "alto",
+      "experiencia": "ninguna"
+    }
+  },
+  {
+    "historia": "Vivo solo en un departamento sin patio, sin chicos y sin gatos. A lo largo de mi vida ya tuve tres perros (hoy no tengo ninguno). Hago home office así que salgo apenas 2 horas al día, y mi ritmo es muy tranquilo: caminatas cortas y nada más.",
+    "esperado": {
+      "tipo_vivienda": "departamento",
+      "tiene_patio": false,
+      "tiene_ninos": false,
+      "tiene_gatos": false,
+      "tiene_perros": false,
+      "horas_fuera": 2,
+      "nivel_actividad": "bajo",
+      "experiencia": "mucha"
+    }
+  },
+  {
+    "historia": "Con mi pareja vivimos en una casa sin patio. Ya tenemos un perro y no hay gatos ni niños en casa. Tuvimos perros toda la vida. Entre el trabajo y los trámites estamos fuera unas 6 horas por día. Nuestra actividad es media: paseos diarios al parque, sin grandes exigencias.",
+    "esperado": {
+      "tipo_vivienda": "casa",
+      "tiene_patio": false,
+      "tiene_ninos": false,
+      "tiene_gatos": false,
+      "tiene_perros": true,
+      "horas_fuera": 6,
+      "nivel_actividad": "medio",
+      "experiencia": "mucha"
+    }
+  }
+]

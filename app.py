@@ -1,11 +1,14 @@
 import streamlit as st
 
-from src.clients import get_supabase
+from src import auth
 from src.db import find_perro_reciente, get_adoptantes, insert_matches, insert_perro
 from src.extraction import ExtractionError, extract_perfil_perro
 from src.matching import score_match
 
 st.set_page_config(page_title="Patitas Match", page_icon="🐾", layout="centered")
+auth.sidebar_user()
+auth.require_staff()  # el registro de perros es solo para staff (plan-01 tarea 5)
+
 st.title("🐾 Patitas Match")
 st.subheader("Registro de perritos rescatados")
 st.write("Ingresa la reseña informal. El sistema extraerá las variables con IA, creará el registro en la base de datos y calculará la afinidad con los postulantes reales.")
@@ -40,7 +43,9 @@ if "perfil" in st.session_state:
     st.success("¡Ficha técnica estructurada por IA correctamente!")
     st.json(datos_perro)
 
-    supabase = get_supabase()
+    # Cliente con el JWT del staff: las políticas RLS de staff permiten
+    # escribir perros/matches y leer todos los adoptantes.
+    supabase = auth.get_user_client()
 
     # Guardia anti-duplicados: mismo nombre registrado hace <10 minutos
     try:
